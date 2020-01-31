@@ -51,16 +51,15 @@
 				width: 40px;
 				transition: all 0.3s;
 			}
-			/* Only fade out pause button on desktop */
-			@media screen and (min-width: 768px) {
-				#controls.pause {
-					animation: 8s delayedfade;
-					opacity: 0.2;
-				}
-				#controls.pause:hover {
-					opacity: 1 !important;
-				}
+			/* start potential mobile styles */
+			#controls.pause {
+				animation: 8s delayedfade;
+				opacity: 0.2;
 			}
+			#controls.pause:hover {
+				opacity: 1 !important;
+			}
+			/* end */
 
 			/* fireflies */
 			html, body, div, span, canvas {
