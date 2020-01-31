@@ -26,7 +26,7 @@
 			body {
 				background: #081523;
 				background: #0e0d0a;
-				background: url(lake.jpg);
+				background: url(../src/img/lake.jpg);
 			    background-position: center;
 			    background-size: cover;
 			    background-repeat: no-repeat;
@@ -114,7 +114,7 @@
 			// o(1) is pause, o(!1) is play
 			let o = function(e) {
 				var a = e ? "pause" : "play";
-				t.setAttribute("src", a + '.png');
+				t.setAttribute("src", '../src/img' + a + '.png');
 				t.setAttribute("class", a);
 			};
 
@@ -127,7 +127,7 @@
 			// ### Loading image and add loading class
 			let loading = function(event) {
 				if (event) {
-					t.setAttribute("src", "loading.gif");
+					t.setAttribute("src", "../src/img/loading.gif");
 					t.setAttribute("class", "loading");
 				}
 			}
