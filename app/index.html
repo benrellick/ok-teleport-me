@@ -96,7 +96,7 @@
 			var dim = function(e) {
 				e ? p.classList.add("dim") : p.classList.remove("dim");
 			}
-			e.onclick = function() {
+			let tapOrClick = function() {
 				r.getPlayerState() === YT.PlayerState.PLAYING || r.getPlayerState() === YT.PlayerState.BUFFERING ? (r.pauseVideo(), o(!1), dim(1)) : (r.playVideo(), o(!0), dim(!1) )
 			};
 			var r = new YT.Player("youtube-player", {
@@ -116,6 +116,9 @@
 					}
 				}
 			})
+			e.addEventListener('touchstart', _ => tapOrClick(), console.log('touched'));
+			e.addEventListener('click', _ => tapOrClick(), console.log('clicked'));
+
 		}
 		</script>
 
