@@ -51,11 +51,18 @@
 				width: 40px;
 				transition: all 0.3s;
 			}
-			/* start potential mobile styles */
 			#controls.pause {
 				animation: 8s delayedfade forwards;
 				opacity: 0.2;
 			}
+			/* mobile styles */
+			@media screen and (min-width: 768px) {
+				#controls.pause {
+					animation: 8s delayedfade;
+					opacity: 0.2;
+				}
+			}
+
 			#controls.pause:hover {
 				opacity: 1 !important;
 			}
