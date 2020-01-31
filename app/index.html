@@ -110,8 +110,14 @@
 					}
 				}
 			})
-			e.addEventListener('touchstart', _ => tapOrClick(), console.log('touched'));
-			e.addEventListener('click', _ => tapOrClick(), console.log('clicked'));
+			e.addEventListener('touchstart', function(){
+				tapOrClick();
+				alert('touched');
+			});
+			e.addEventListener('click', function(){
+				tapOrClick();
+				alert('clicked');
+			});
 
 		}
 		</script>
