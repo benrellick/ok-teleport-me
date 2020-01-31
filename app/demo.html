@@ -95,8 +95,8 @@
 
     <script>
 
-      let test = function () {
-        alert('test function is running');
+      let askPermission = function () {
+        alert('askPermission function is running');
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
           DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
@@ -109,10 +109,19 @@
             .catch(console.error);
         } else {
           // handle regular non iOS 13+ devices
+          alert("we have no way of knowing if the device is moving or not :( ....");
         }
-      }();
+      };
 
-      let t = document.getElementById("permission");
+      let p = document.getElementById("permission");
+
+      p.addEventListener('touchstart', function(ev){
+        ev.preventDefault();
+        askPermission();
+      });
+      p.addEventListener('click', function(){
+        askPermission();
+      });
 
     </script>
   </body>
