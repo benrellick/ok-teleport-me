@@ -14,6 +14,23 @@
 	    <!--  minimal-ui -->
 		
 		<style>
+			@keyframes delayedfade {
+				0% { opacity: 1; }
+				80% { opacity: 1; }
+				100% { opacity: 0.2; }
+			}
+			@keyframes corner {
+				0% { top: 50%; left: 50%; }
+				100% { top: 90%; left: 10%; }
+			}
+			body {
+				background: #081523;
+				background: #0e0d0a;
+				background: url(lake.jpg);
+			    background-position: center;
+			    background-size: cover;
+			    background-repeat: no-repeat;
+			}
 			body {
 				width: 100vw;
 	    		height: 100vh;
@@ -26,13 +43,29 @@
 			    transform: translate(-50%, -50%);
 			    z-index: 1;
 			}
-			#youtube-icon {
+			div#youtube-audio:hover, #controls:hover {
+				cursor: pointer;
+			}
+			#controls {
 				filter: invert(1);
 				width: 40px;
+				transition: all 0.3s;
 			}
-			/* fireflies */
+			/* Only fade out pause button on desktop */
+			@media screen and (min-width: 768px) {
+				#controls.pause {
+					animation: 8s delayedfade;
+					opacity: 0.2;
+				}
+				#controls.pause:hover {
+					opacity: 1 !important;
+				}
+			}
 
-			html, body, div, span, canvas { margin:0; padding:0; }
+			/* fireflies */
+			html, body, div, span, canvas {
+				margin:0; padding:0;
+			}
 			#container {
 			  overflow:hidden;
 			  position:relative;
@@ -40,15 +73,6 @@
 			  width: 100%;
 			  z-index: 0;
 			}
-			body {
-				background: #081523;
-				background: #0e0d0a;
-				background: url(lake.jpg);
-			    background-position: center;
-			    background-size: cover;
-			    background-repeat: no-repeat;
-			}
-
 			#pixie {
 			  z-index:10;
 			  position: absolute;
@@ -59,74 +83,6 @@
 			#pixie.dim {
 				filter: brightness(0.1);
 			}
-
-			/* tool tip */
-			/**
- * Tooltip Styles
- */
-
-/* Add this attribute to the element that needs a tooltip */
-[data-tooltip] {
-  position: relative;
-  z-index: 2;
-  cursor: pointer;
-}
-
-/* Hide the tooltip content by default */
-[data-tooltip]:before,
-[data-tooltip]:after {
-  visibility: hidden;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Position tooltip above the element */
-[data-tooltip]:before {
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  margin-bottom: 5px;
-  margin-left: -80px;
-  padding: 7px;
-  width: 160px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background-color: #000;
-  background-color: hsla(0, 0%, 20%, 0.9);
-  color: #fff;
-  content: attr(data-tooltip);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.2;
-}
-
-/* Triangle hack to make tooltip look like a speech bubble */
-[data-tooltip]:after {
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -5px;
-  width: 0;
-  border-top: 5px solid #000;
-  border-top: 5px solid hsla(0, 0%, 20%, 0.9);
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  content: " ";
-  font-size: 0;
-  line-height: 0;
-}
-
-/* Show tooltip content on hover */
-[data-tooltip]:hover:before,
-[data-tooltip]:hover:after {
-  visibility: visible;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-}
 
 		</style>
 
@@ -143,7 +99,6 @@
 		</div>
 
 		<script src="https://www.youtube.com/iframe_api"></script>
-
 		<script>
 			function onYouTubeIframeAPIReady() {
 			// Get or create elements in DOM
@@ -152,23 +107,29 @@
 				p = document.getElementById("pixie");
 
 			// Set up attributes
-			t.setAttribute("id", "youtube-icon"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
+			t.setAttribute("id", "controls"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
 			let a = document.createElement("div");
 			a.setAttribute("id", "youtube-player"), e.appendChild(a);
-			t.setAttribute("data-tooltip", "play");
 
+			// ### Set image, and add play/pause class
 			// o(1) is pause, o(!1) is play
 			let o = function(e) {
-				var a = e ? "pause.png" : "play.png";
-				t.setAttribute("src", a)
+				var a = e ? "pause" : "play";
+				t.setAttribute("src", a + '.png');
+				t.setAttribute("class", a);
 			};
+
+			// ### Dim to fade bugs out, or in
 			// dim(1) is no bugs, dim(!1) is bugs
 			var dim = function(e) {
 				e ? p.classList.add("dim") : p.classList.remove("dim");
 			}
-			var loading = function(event) {
+
+			// ### Loading image and add loading class
+			let loading = function(event) {
 				if (event) {
 					t.setAttribute("src", "loading.gif");
+					t.setAttribute("class", "loading");
 				}
 			}
 
@@ -191,14 +152,14 @@
 				events: {
 					onReady: function(e) {
 						console.log(r.getPlayerState());
-						r.setPlaybackQuality("small"), o(r.getPlayerState() !== YT.PlayerState.CUED), dim(1)
+						r.setPlaybackQuality("small"), o(r.getPlayerState() !== YT.PlayerState.CUED), dim(1), r.mute();
 					},
 					onStateChange: function(e) {
 						console.log("state change: " + r.getPlayerState());
 						e.data === YT.PlayerState.ENDED && (o(!1), dim(1))
-						e.data === YT.PlayerState.PLAYING && (o(1), dim(!1)) // Un-Dim, release the bugss
+						e.data === YT.PlayerState.PLAYING && (o(1), dim(!1), r.unMute() ) // Un-Dim, release the bugs
 						e.data === YT.PlayerState.PAUSED && (o(!1), dim(1))
-						e.data === YT.PlayerState.BUFFERING && (loading(1), dim(1))
+						e.data === YT.PlayerState.BUFFERING && (loading(1), dim(1) )
 						e.data === YT.PlayerState.CUED && (o(!1), dim(1))
 					}
 				}
