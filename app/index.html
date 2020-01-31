@@ -121,10 +121,12 @@
 			t.setAttribute("id", "youtube-icon"), t.style.cssText = "cursor:pointer;cursor:hand", e.appendChild(t);
 			var a = document.createElement("div");
 			a.setAttribute("id", "youtube-player"), e.appendChild(a);
+			// o(1) is sound, o(!1) is no sound
 			var o = function(e) {
 				var a = e ? "sound.png" : "nosound.png";
 				t.setAttribute("src", a)
 			};
+			// dim(1) is no bugs, dim(!1) is bugs
 			var dim = function(e) {
 				e ? p.classList.add("dim") : p.classList.remove("dim");
 			}
@@ -134,12 +136,10 @@
 				}
 			}
 			let tapOrClick = function() {
-				if (r.getPlayerState() === YT.PlayerState.BUFFERING) {
-					r.pauseVideo(), o(!1), dim(1), loading(1)
-				} else if (r.getPlayerState() === YT.PlayerState.PLAYING) {
-					r.pauseVideo(), o(!1), dim(1)
+				if (r.getPlayerState() === YT.PlayerState.BUFFERING || r.getPlayerState() === YT.PlayerState.PLAYING) {
+					r.pauseVideo()
 				} else {
-					r.playVideo(), o(!0), dim(!1)
+					r.playVideo()
 				}
 			};
 			var r = new YT.Player("youtube-player", {
@@ -154,11 +154,15 @@
 				events: {
 					onReady: function(e) {
 						console.log(r.getPlayerState());
-						r.setPlaybackQuality("small"), o(r.getPlayerState() !== YT.PlayerState.CUED)
+						r.setPlaybackQuality("small"), o(r.getPlayerState() !== YT.PlayerState.CUED), r.playVideo()
 					},
 					onStateChange: function(e) {
 						console.log("state change: " + r.getPlayerState());
-						e.data === YT.PlayerState.ENDED && o(!1)
+						e.data === YT.PlayerState.ENDED && (o(!1), dim(1))
+						e.data === YT.PlayerState.PLAYING && (o(1), dim(!1)) // Un-Dim, release the bugss
+						e.data === YT.PlayerState.PAUSED && (o(!1), dim(1))
+						e.data === YT.PlayerState.BUFFERING && (loading(1), dim(1))
+						e.data === YT.PlayerState.CUED && (o(!1), dim(1))
 					}
 				}
 			})
